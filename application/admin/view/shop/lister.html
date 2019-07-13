@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+{include file="public:header"}
+
+<body class="no-skin">
+<!--头部-->
+{include file="public:nav"}
+
+<div class="main-container ace-save-state" id="main-container">
+  <!--菜单-->
+  <script type="text/javascript">
+  try{ace.settings.loadState('main-container')}catch(e){}
+</script>
+
+{include file="public:left"}
+
+  <div class="main-content">
+    <div class="main-content-inner">
+      <div class="breadcrumbs ace-save-state" id="breadcrumbs">
+        <ul class="breadcrumb">
+          <li>
+            <i class="ace-icon fa fa-home home-icon"></i>
+            <a href="{:url('Index/index')}">首页</a>
+          </li>
+          
+          <li class="active">商家列表</li>
+        </ul><!-- /.breadcrumb -->
+
+      </div>
+
+      <div class="page-content">
+        {include file="public:set"}
+        <div class="row">
+          <div class="col-xs-12">
+            <div class="col-sm-10 col-sm-offset-1">
+              <div class="page-header">
+                <div class="row">
+                {if condition="$admin.level neq 2"}  
+                <div class="col-sm-4">
+                <a class="btn btn-success btn-white btn-bold" href="{:url('Shop/add')}">
+                  <i class="ace-icon fa fa-plus icon-only"></i>
+                  添加</a>
+                <button id="change" class="btn btn-warning btn-white btn-bold">
+                  <i class="fa fa-exchange"></i>
+                 排序
+                </button>
+                <button class="btn btn-danger btn-white btn-bold del-btn">
+                  <i class="ace-icon fa fa-trash-o icon-only"></i>
+                  删除
+                </button>
+                </div>
+                
+               <div class="col-sm-8 clearfix">
+                  <form class="form-inline pull-right" action="">
+                
+              
+                    <div class="form-group">
+                      <div class="input-group">
+									<span class="input-group-addon">
+										<i class="ace-icon fa fa-check"></i>
+									</span>
+                        <input type="text" name="title" id="key" class="form-control search-query" value="{$title}" placeholder="请输入需查询的商家名称">
+                        <span class="input-group-btn">
+										<button type="submit" class="btn btn-info btn-sm ajax-search-form">
+											<span class="ace-icon fa fa-search icon-on-right bigger-120"></span> 搜索
+									</button>
+									</span>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+                {/if}
+                </div>
+              </div>
+              <table class="table table-bordered table-hover">
+                <thead>
+                <tr>
+                  <th class="center">
+                    <label class="pos-rel">
+                      <input type="checkbox" class="ace checkAll">
+                      <span class="lbl"></span>
+                    </label>
+                  </th>
+                  <th>ID</th>
+                  <th class="hidden-480">排序</th>
+                  <th class="hidden-480">公司名称</th>
+                  <!-- <th class="hidden-480">评分</th>
+                  <th class="hidden-480">分享量</th>
+                  <th class="hidden-480">浏览量</th> -->
+                  <th class="hidden-480">公司地址</th>
+                  <th class="hidden-480">营业时间</th>
+                  <th class="hidden-480">联系电话</th>
+                  <th class="hidden-480">联系人</th>
+                  <th class="hidden-480">banner图</th>
+                  <th class="hidden-480">头条</th>
+                  <th>状态</th>
+                  <th>推荐</th>
+                  <th>新入</th>
+                  <th>热门</th>
+                  <th style="border-right:#ddd solid 1px;width: 7%">操作</th>
+                </tr>
+                </thead>
+                <form id="sortForm" action="__URL__/sort" method="post"> 
+                <tbody>
+                {volist name="list" id="v"}
+                <tr class="ace-thumbnails">
+                  <td class="center"><label class="pos-rel">
+                    <input type="checkbox" class="ace check" value="{$v.id}">
+                    <span class="lbl"></span>
+                  </label>
+                  </td>
+                  <td><span class="badge badge-grey">{$v.id}</span></td>
+                  <td class="hidden-480"><input class="input-small" type="number" name="{$v.id}" value="{$v.sort}"></td>
+                  <td class="hidden-480">{$v.name}</td> 
+                  <!-- <td class="hidden-480">{$v.score}</td> 
+                  <td class="hidden-480">{$v.share}</td>
+                  <td class="hidden-480">{$v.browse}</td> -->
+                  <td class="hidden-480">{$v.addr}</td>
+                  <td class="hidden-480">{$v.time}</td>
+                  <td>
+                      <a class="btn btn-xs btn-info" href="{:url('phone',array('id'=>$v['id']))}">
+                        查看
+                      </a>
+                      
+                    </td>
+                    <td>
+                      <a class="btn btn-xs btn-info" href="{:url('people',array('id'=>$v['id']))}">
+                        查看
+                      </a>
+                      
+                    </td>
+                    <td>
+                        <a class="btn btn-xs btn-info" href="{:url('banner',array('id'=>$v['id']))}">
+                          查看
+                        </a>
+                        
+                      </td>
+                      <td>
+                          <a class="btn btn-xs btn-info" href="{:url('sto',array('id'=>$v['id']))}">
+                            查看
+                          </a>
+                          
+                        </td>
+                  
+                  <td>
+                    <label>
+                      <input id="statu" name="status" onclick="change({$v.id})" class="ace ace-switch ace-switch-6" type="checkbox" {if condition="$v.status eq 1"}checked{/if} />
+                      <span class="lbl"></span>
+                    </label>
+                  </td>
+                  <td>
+                    <label>
+                      <input id="statu" name="status" onclick="changer({$v.id})" class="ace ace-switch ace-switch-6" type="checkbox" {if condition="$v.recome eq 1"}checked{/if} />
+                      <span class="lbl"></span>
+                    </label>
+                  </td>
+                  <td>
+                    <label>
+                      <input id="statu" name="status" onclick="changen({$v.id})" class="ace ace-switch ace-switch-6" type="checkbox" {if condition="$v.news eq 1"}checked{/if} />
+                      <span class="lbl"></span>
+                    </label>
+                  </td>
+
+                  <td>
+                      <label>
+                        <input id="statu" name="recome" onclick="changeh({$v.id})" class="ace ace-switch ace-switch-6" type="checkbox" {if condition="$v.hot eq 1"}checked{/if} />
+                        <span class="lbl"></span>
+                      </label>
+                    </td>
+             
+                  <td>
+                    <a class="btn btn-xs btn-info" href="{:url('modifys',array('id'=>$v['id']))}">
+                      <i class="ace-icon fa fa-pencil bigger-120"></i>
+                    </a>
+                    <button class="btn btn-xs btn-danger" type="button" onclick="dels({$v.id})">
+                      <i class="ace-icon fa fa-trash-o bigger-120"></i>
+                    </button>
+                  </td>
+                </tr>
+                {/volist}
+                {empty name="list"}<tr><td colspan="20" class="text-center">暂无数据</td></tr>{/empty}
+                </tbody>
+                </form>
+              </table>
+              <div class="text-center">
+                {$page}
+              </div>
+            </div>
+          </div><!-- /.col -->
+        </div><!-- /.row -->
+      </div><!-- /.page-content -->
+    </div>
+  </div><!-- /.main-content -->
+
+{include file="public:footer"}
+
+<a href="#" id="btn-scroll-up" class="btn-scroll-up btn btn-sm btn-inverse">
+  <i class="ace-icon fa fa-angle-double-up icon-only bigger-110"></i>
+</a>
+</div><!-- /.main-container -->
+
+<script>
+  jQuery(function($) {
+    $('[data-rel=tooltip]').tooltip();
+
+    $( "#hide-option" ).tooltip({
+      hide: {
+        effect: "explode",
+        delay: 250
+      }
+    });
+
+  })
+</script>
+<script type="text/javascript">
+  function dels(id) {
+  layer.confirm('你确定删除吗？', { icon: 3 }, function (index) {
+    layer.close(index);
+    $.ajax({
+      url: '__URL__/delete',
+      type: 'post',
+      data: { id: id },
+      success: function (re) {
+        if(re == 0){
+          layer.msg("删除成功");
+          setTimeout("location.reload()",1500);
+        }else{
+        layer.msg("删除失败");
+          setTimeout("location.reload()",1500);
+        }
+      }
+    })
+  });
+}
+  </script>
+<script>
+function change(id){
+	$.ajax({
+		type:"post",
+		url:"__URL__/change",
+	    data:{id:id},
+	    datatype:"text",
+	    success:function(){
+	    	
+	    }
+	})
+}
+function changer(id){
+	$.ajax({
+		type:"post",
+		url:"__URL__/changer",
+	    data:{id:id},
+	    datatype:"text",
+	    success:function(){
+	    	
+	    }
+	})
+}
+function changen(id){
+	$.ajax({
+		type:"post",
+		url:"__URL__/changen",
+	    data:{id:id},
+	    datatype:"text",
+	    success:function(){
+	    	
+	    }
+	})
+}
+function changeh(id){
+	$.ajax({
+		type:"post",
+		url:"__URL__/changeh",
+	    data:{id:id},
+	    datatype:"text",
+	    success:function(){
+	    	
+	    }
+	})
+}
+</script>
+
+
+  <script>
+  $("#change").click(function(){
+  	$("#sortForm").submit();
+  })
+
+  </script>
+</body>
+</html>

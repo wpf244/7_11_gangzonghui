@@ -5,7 +5,7 @@ class Goods extends BaseAdmin
 {
     public function type()
     {
-        $res=db("type")->where(["fid"=>0])->order(["sort asc","id desc"])->select();
+        $res=db("type")->where(["fid"=>0])->order(["sort asc","id asc"])->select();
 
         $this->assign("res",$res);
 
