@@ -28,24 +28,31 @@ class Index extends BaseHome
         //推荐企业
         $city=input("city");
 
-        $recome=db("shop")->field("id,name,addr,manage,phone,logo")->where(["statu"=>1,"status"=>1,"recome"=>1,"addr"=>['like',"%".$city."%"]])->order(["sort asc","id desc"])->select();
+        $longs=input("longs");
+
+        $lats=input("lats");
+
+        $recome=db("shop")->field("id,name,addr,manage,phone,logo,longs,lats")->where(["statu"=>1,"status"=>1,"recome"=>1,"addr"=>['like',"%".$city."%"]])->order(["sort asc","id desc"])->select();
 
         foreach($recome as $kr => $vr){
             $recome[$kr]['logo']=$url.$vr['logo'];
+            $recome[$kr]['gap']=$this->getDistance($lats,$longs,$vr['lats'],$vr['longs']);
         }
 
         //新入
-        $news=db("shop")->field("id,name,addr,manage,phone,logo")->where(["statu"=>1,"status"=>1,"news"=>1,"addr"=>['like',"%".$city."%"]])->order(["sort asc","id desc"])->select();
+        $news=db("shop")->field("id,name,addr,manage,phone,logo,longs,lats")->where(["statu"=>1,"status"=>1,"news"=>1,"addr"=>['like',"%".$city."%"]])->order(["sort asc","id desc"])->select();
 
         foreach($news as $kr => $vr){
             $news[$kr]['logo']=$url.$vr['logo'];
+            $news[$kr]['gap']=$this->getDistance($lats,$longs,$vr['lats'],$vr['longs']);
         }
 
         //热门
-        $hot=db("shop")->field("id,name,addr,manage,phone,logo")->where(["statu"=>1,"status"=>1,"hot"=>1,"addr"=>['like',"%".$city."%"]])->order(["sort asc","id desc"])->select();
+        $hot=db("shop")->field("id,name,addr,manage,phone,logo,longs,lats")->where(["statu"=>1,"status"=>1,"hot"=>1,"addr"=>['like',"%".$city."%"]])->order(["sort asc","id desc"])->select();
 
         foreach($hot as $kr => $vr){
             $hot[$kr]['logo']=$url.$vr['logo'];
+            $hot[$kr]['gap']=$this->getDistance($lats,$longs,$vr['lats'],$vr['longs']);
         }
 
 
@@ -114,10 +121,15 @@ class Index extends BaseHome
 
         $id=input("id");
 
-        $res=db("shop")->field("id,name,addr,manage,phone,logo")->where(["statu"=>1,"status"=>1,"tid"=>$id,"addr"=>['like',"%".$city."%"]])->order(["sort asc","id desc"])->select();
+        $longs=input("longs");
+
+        $lats=input("lats");
+
+        $res=db("shop")->field("id,name,addr,manage,phone,logo,lats,longs")->where(["statu"=>1,"status"=>1,"tid"=>$id,"addr"=>['like',"%".$city."%"]])->order(["sort asc","id desc"])->select();
 
         foreach($res as $kr => $vr){
             $res[$kr]['logo']=$url.$vr['logo'];
+            $res[$kr]['gap']=$this->getDistance($lats,$longs,$vr['lats'],$vr['longs']);
         }
         $arr=[
             'error_code'=>0,
@@ -154,10 +166,15 @@ class Index extends BaseHome
         
         $keywords=input("keywords");
 
-        $res=db("shop")->field("id,name,addr,manage,phone,logo")->where(["statu"=>1,"status"=>1,"name|addr|manage"=>['like',"%".$keywords."%"]])->order(["sort asc","id desc"])->select();
+        $longs=input("longs");
+
+        $lats=input("lats");
+
+        $res=db("shop")->field("id,name,addr,manage,phone,logo,longs,lats")->where(["statu"=>1,"status"=>1,"name|addr|manage"=>['like',"%".$keywords."%"]])->order(["sort asc","id desc"])->select();
 
         foreach($res as $kr => $vr){
             $res[$kr]['logo']=$url.$vr['logo'];
+            $res[$kr]['gap']=$this->getDistance($lats,$longs,$vr['lats'],$vr['longs']);
         }
         $arr=[
             'error_code'=>0,
@@ -393,38 +410,15 @@ class Index extends BaseHome
     {
         $id=input("id");
 
-        $re=db("shop")->where("id",$id)->find();
+        $re=db("shop")->field("longs,lats")->where("id",$id)->find();
 
         if($re){
 
-            if($re['addr']){
-               
-                $addr=$re['addr'];
-
-                $addrs=$this->get_addr($addr);
-
-                if($addrs == 0){
-                    $arr=[
-                        'error_code'=>2,
-                        'msg'=>"获取失败",
-                        'data'=>[]
-                    ];  
-                }else{
-                    $arr=[
-                        'error_code'=>0,
-                        'msg'=>"获取成功",
-                        'data'=>$addrs
-                    ];  
-                }
-
-            }else{
-                $arr=[
-                    'error_code'=>2,
-                    'msg'=>"获取失败",
-                    'data'=>[]
-                ];  
-            }
-
+            $arr=[
+                'error_code'=>0,
+                'msg'=>"获取成功",
+                'data'=>$re
+            ];  
         }else{
             $arr=[
                 'error_code'=>1,
@@ -434,6 +428,7 @@ class Index extends BaseHome
         }
         return json($arr);
     }
+
 
 
     /**
@@ -469,6 +464,36 @@ class Index extends BaseHome
         
       
        
+
+    }
+     /**
+    * @param $lat1
+    * @param $lng1
+    * @param $lat2
+    * @param $lng2
+    * @return int
+    */
+    function getDistance($lat1, $lng1, $lat2, $lng2){
+
+        //将角度转为狐度
+
+        $radLat1=deg2rad($lat1);//deg2rad()函数将角度转换为弧度
+
+        $radLat2=deg2rad($lat2);
+
+        $radLng1=deg2rad($lng1);
+
+        $radLng2=deg2rad($lng2);
+
+        $a=$radLat1-$radLat2;
+
+        $b=$radLng1-$radLng2;
+
+        $s=2*asin(sqrt(pow(sin($a/2),2)+cos($radLat1)*cos($radLat2)*pow(sin($b/2),2)))*6378.137;
+
+        $s= sprintf("%.2f",$s);
+        
+        return $s;
 
     }
 

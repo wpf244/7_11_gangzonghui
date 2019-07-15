@@ -13,11 +13,16 @@ class Info extends BaseHome
 
         $re['image']=$url.$re['image'];
 
+        $user=db("lb")->field("image")->where(["fid"=>7])->find();
+
+        $user['image']=$url.$user['image'];
+
         $arr=[
             'error_code'=>0,
             'msg'=>"获取成功",
             'data'=>[
                 'info'=>$re['image'],
+                'user'=>$user['image'],
             ]
         ]; 
     

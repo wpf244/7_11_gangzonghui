@@ -67,10 +67,10 @@ function check_dir_iswritable($dir_path) {
  * */
 function Post($phone,$code){ 
     $post_data = array();
-    $post_data['userid'] = 21092;
-    $post_data['account'] = '联邦在线';
+    $post_data['userid'] = 21439;
+    $post_data['account'] = '钢总汇';
     $post_data['password'] = '123456';
-    $post_data['content'] = '【联邦在线】您的验证码为'.$code.'，请您在5分钟内完成操作。'; //短信内容需要用urlencode编码下
+    $post_data['content'] = '【钢总汇】您的验证码为'.$code.'，请您在5分钟内完成操作。'; //短信内容需要用urlencode编码下
     $post_data['mobile'] = "$phone";
     $post_data['sendtime'] = ''; //不定时发送，值为0，定时发送，输入格式YYYYMMDDHHmmss的日期值
     

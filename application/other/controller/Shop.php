@@ -1,5 +1,5 @@
 <?php
-namespace app\admin\controller;
+namespace app\other\controller;
 
 use think\Request;
 use think\Db;
@@ -85,8 +85,10 @@ class Shop extends BaseAdmin
         }
         $this->assign("title",$title);
 
+        $uid=session("uid");
 
-        $list=db("shop")->where(["statu"=>1])->order(["sort asc","id desc"])->paginate(20,false,['query'=>request()->param()]);
+
+        $list=db("shop")->where(["statu"=>1,"id"=>$uid])->order(["sort asc","id desc"])->paginate(20,false,['query'=>request()->param()]);
 
         $this->assign("list",$list);
 
