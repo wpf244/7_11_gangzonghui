@@ -128,7 +128,7 @@ class Shop extends BaseAdmin
 
         if($logo){
             $data['logo']=uploads("logo");
-        
+           
         }
         $wx=request()->file("wx");
 
@@ -191,10 +191,19 @@ class Shop extends BaseAdmin
             if($logo){
                 $data['logo']=uploads("logo");
 
+                $image=substr($data['logo'],1);
+
+                $data['image']= $this->makeNewQrCodeAction($image,$id);
+
                 deleteImg($re['logo']);
             
             }else{
+
                 $data['logo']=$re['logo'];
+
+                $image=substr($data['logo'],1);
+
+                $data['image']= $this->makeNewQrCodeAction($image,$id);
                 
             }
             $wx=request()->file("wx");
@@ -628,6 +637,11 @@ class Shop extends BaseAdmin
 
             $data['statu']=1;
             $data['pwd']="123456";
+
+            $image=substr($re['logo'],1);
+
+            $data['image']= $this->makeNewQrCodeAction($image,$id);
+
             $images=explode(",",$re['images']);
 
             $content='';
@@ -712,6 +726,156 @@ class Shop extends BaseAdmin
         
         return $this->fetch();
     }
+    public function join()
+    {
+        if(request()->isAjax()){
+
+            $data=input("post.");
+
+            $res=db("shop_other")->where("type",5)->update($data);
+
+            if($res){
+                $this->success("修改成功");
+            }else{
+                $this->error("修改失败");
+            }
+
+        }else{
+            
+            $re=db("shop_other")->where("type",5)->find();
+
+            $this->assign("re",$re);
+
+            return $this->fetch();
+        }
+
+    }
+    public function getshop()
+    {
+        $this->makeNewQrCodeAction("uploads/20190712/f21b490cbbe195c23e8b9896eb2d20ab.png",2);
+    }
+    public function makeNewQrCodeAction($image,$id)
+    {
+        //获取用户头像并转string
+    
+        $logo=$image; 
+        $image = \think\Image::open($logo);
+        $pathss='uploads/'.uniqid().time().'.jpg';
+        $logo= $image->thumb(130,130,\think\Image::THUMB_CENTER)->round()->save($pathss);
+
+        
+        //获取小程序码
+        $data['scene'] = "$id"; 
+
+        $data['page'] = "pages/classify/detail";
+        
+        $Qr_code = $this->getShareCode($data);  //生成小程序码接口
+
+        //转码为base64格式并本地保存
+        $base64_image ="data:image/jpeg;base64,".base64_encode($Qr_code);
+
+        $path = 'uploads/'.uniqid().'.jpg';
+        $this->file_put($base64_image, $path);
+
+        $image = \think\Image::open($path);
+        
+        $paths='uploads/'.time().'.jpg';
+        // 给原图左上角添加水印并保存water_image.png
+    //   var_dump($image);
+        $image->water($pathss,\think\Image::WATER_CENTER)->save($paths);
+
+        
+        $image='/'.$paths;
+
+        deleteImg($pathss);
+        deleteImg($path);
+
+        return $image;
+
+    }
+  /**
+     * 图片保存
+     *
+     * @param [type] $base64_image_content base64格式图片资源
+     * @param [type] $new_file 保存的路径，文件夹必须存在
+     * @return void
+     */
+    public function file_put($base64_image_content,$new_file)
+    {
+        header('Content-type:text/html;charset=utf-8');
+        if (preg_match('/^(data:\s*image\/(\w+);base64,)/', $base64_image_content, $result)){
+            if (file_put_contents($new_file, base64_decode(str_replace($result[1], '', $base64_image_content)))){
+                return true;
+            }else{
+                return false;
+            }
+        }
+    }
+
+
+   public function getShareCode($data)  //生成小程序码
+   {
+        $access_token = $this->getAccessToken();  //获取access_token这个要设置token缓存，具体可以查看我的另一篇文章
+        $res_url = "https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=$access_token";
+        header('content-type:image/png');
+       // $data['is_hyaline']=true;
+        $data['width']=280;
+         $data = json_encode($data);
+     
+    
+      //  $data='{"scene":"'.$data['scene'].'", "page":"'. $data['page'] .'","is_hyaline":"'. $data['is_hyaline'] .'"}';
+        $Qr_code = $this->httpRequest($res_url, $data,"POST");
+
+      //  var_dump($Qr_code);exit;
+        return $Qr_code;
+
+    }
+    public function getAccessToken()
+    {
+        //微信token
+        $payment=db("payment")->where("id",1)->find();
+        $appid = $payment['appid'];
+        $secret = $payment['appsecret'];
+        $url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=".$appid."&secret=".$secret;
+        $results=json_decode(file_get_contents($url)); 
+
+        $token=$results->access_token;
+
+        return $token;
+    }
+    /**
+     * curl函数网站请求封装函数
+     *
+     * @param [type] $url 请求地址
+     * @param string $data 数据
+     * @param string $method 请求方法
+     * @return void
+     */
+    function httpRequest($url, $data='', $method='GET'){
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($curl, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']);
+        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
+        curl_setopt($curl, CURLOPT_AUTOREFERER, 1);
+        if($method=='POST')
+        {
+            curl_setopt($curl, CURLOPT_POST, 1);
+            if ($data != '')
+            {
+                curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+            }
+        }
+     
+        curl_setopt($curl, CURLOPT_TIMEOUT, 30);
+        curl_setopt($curl, CURLOPT_HEADER, 0);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        $result = curl_exec($curl);
+        curl_close($curl);
+        return $result;
+    }
+
 
 
 

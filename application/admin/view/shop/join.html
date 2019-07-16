@@ -24,7 +24,7 @@
                             <i class="ace-icon fa fa-home home-icon"></i>
                             <a href="{:url('Index/index')}">首页</a>
                         </li>
-                        <li class="active">微信支付</li>
+                        <li class="active">商户入口设置</li>
                     </ul><!-- /.breadcrumb -->
 
                 </div>
@@ -36,41 +36,24 @@
                     <div class="row">
                         <div class="col-xs-12">
                             <div class="col-sm-10 col-sm-offset-1">
-                                <form id="logoForm" class="form-horizontal" action="{:url('Payment/save')}" method="post" enctype="multipart/form-data">
+                                <form id="logoForm" class="form-horizontal" action="{:url('Shop/join')}" method="post" enctype="multipart/form-data">
                                     <div class="row">
                                         <div class="col-sm-7">
                                             <div class="widget-box transparent">
                                                 <div class="widget-header widget-header-flat">
-                                                    <h4 class="widget-title"><i class="ace-icon fa fa-leaf green"></i>微信支付信息</h4>
+                                                    <h4 class="widget-title"><i class="ace-icon fa fa-leaf green"></i>商户入口设置</h4>
                                                 </div>
                                                 <div class="widget-body">
                                                     <div class="widget-main">
                                                       
                                                         <div class="form-group">
-                                                            <label class="col-sm-2 control-label no-padding-right" for="">身份标识(appid)</label>
+                                                            <label class="col-sm-2 control-label no-padding-right" for="">地址</label>
                                                             <div class="col-sm-10">
-                                                                <input class="form-control" type="text" name="appid"
-                                                                  value="{$re.appid}"   required>
+                                                                <input class="form-control" type="text" name="name"
+                                                                  value="{$re.name}"   required>
                                                             </div>
                                                         </div>
-                                                        <div class="form-group">
-                                                            <label class="col-sm-2 control-label no-padding-right" for="">身份密钥(appSecret)</label>
-                                                            <div class="col-sm-10">
-                                                                <input class="form-control" type="text"  name="appsecret" value="{$re.appsecret}" required>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label class="col-sm-2 control-label no-padding-right" for="">微信支付商户号(mch_id)</label>
-                                                            <div class="col-sm-10">
-                                                                <input class="form-control" type="text" name="mchid"  value="{$re.mchid}"   >
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label class="col-sm-2 control-label no-padding-right" for="">微信支付密钥(key)</label>
-                                                            <div class="col-sm-10">
-                                                                <input class="form-control" type="text" name="key"  value="{$re.key}"  >
-                                                            </div>
-                                                        </div>
+                                                     
                                                     </div>
                                                 </div>
                                             </div>
@@ -82,7 +65,7 @@
                                                 <i class="ace-icon fa fa-floppy-o bigger-110"></i>
                                                 保存
                                             </button>
-                                         
+                                    
                                         </div>
                                     </div>
                                 </form>

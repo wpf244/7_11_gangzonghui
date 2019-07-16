@@ -237,6 +237,40 @@ class User extends BaseHome
            }
            return json($arr);
        }
+       /**
+       * 商户入口
+       *
+       * @return void
+       */
+      public function join()
+      {
+          $uid=Request::instance()->header("uid");
+
+          $re=db("shop")->where(["uid"=>$uid,"statu"=>1])->find();
+
+          if($re){
+            
+            $join=db("shop_other")->field("name")->where("type",5)->find();
+
+            $join['username']=$re['phone'];
+
+            $join['pwd']=$re['pwd'];
+
+            $arr=[
+                'error_code'=>1,
+                'msg'=>"获取成功",
+                'data'=>$join
+            ]; 
+
+          }else{
+            $arr=[
+                'error_code'=>1,
+                'msg'=>"您还不是入住商户",
+                'data'=>[]
+            ]; 
+          }
+          return json($arr);
+      }
 
 
 

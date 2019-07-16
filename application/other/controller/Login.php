@@ -20,7 +20,7 @@ class Login extends Common
         $pwd=input('post.password');
         $re=db("shop")->where(array('phone'=>$unm,'pwd'=>$pwd))->find();
         if($re){
-           if($re['status'] == 1){
+           if($re['status'] == 1 && $re['statu'] == 1){
             session('uid',$re['id']);
             \session('username',$re['username']);
            

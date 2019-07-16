@@ -98,7 +98,7 @@
                   </th>
                   <th>ID</th>
                   <th>评论类型</th>
-                  <th>名称</th>
+                
                   <th>评价内容</th>
                   <th>几星</th>
                   <th>评价时间</th>
@@ -121,12 +121,7 @@
                     {if condition="$v.type eq 2"}发布信息评论{/if}
                    
                     </td>
-                    <?php 
-                    if($v['type'] == 1){ $name=db("shop")->field(" name")->where("id",$v['sid'])->find(); }
-                   
-                 
-              ?>
-                  <td>{$name.name}</td>
+                  
               
                   <td>{$v.content}</td>
                   <td>{$v.num}</td>
