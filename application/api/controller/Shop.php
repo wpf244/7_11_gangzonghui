@@ -101,6 +101,10 @@ class Shop extends BaseHome
         //产品分类
         $type=db("type")->field("id,name")->where(["fid"=>0,"status"=>1])->order(["sort asc","id asc"])->select();
 
+        foreach($type as &$vs){
+            $vs['next']=db("type")->field("id,name")->where("fid",$vs['id'])->select();
+        }
+
         //配套设施
 
         $sever=db("shop_sever")->order("id asc")->select();
