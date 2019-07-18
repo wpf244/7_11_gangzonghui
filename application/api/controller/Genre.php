@@ -175,7 +175,7 @@ class Genre extends BaseHome
 
             $re['up']=$up;
         
-
+            db("info")->where("id",$id)->setInc("browse",1);
         $arr=[
             'error_code'=>0,
             'msg'=>"获取成功",

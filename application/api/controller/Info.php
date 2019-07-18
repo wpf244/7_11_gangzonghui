@@ -2,6 +2,7 @@
 namespace app\api\controller;
 
 use think\Request;
+use think\Validate;
 
 class Info extends BaseHome
 {
@@ -66,6 +67,8 @@ class Info extends BaseHome
          $uid=Request::instance()->header("uid");
 
          $data=input("post.");
+
+        //  var_dump($data);exit;
 
          $data['image']=\implode(",",$data['image']);
 
