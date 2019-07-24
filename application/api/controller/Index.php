@@ -202,6 +202,7 @@ class Index extends BaseApi
 
             $re['logo']=$url.$re['logo'];
             $re['wx']=$url.$re['wx'];
+            $re['image']=$url.$re['image'];
 
             if($uid){
                 $re['collect']=0;

@@ -618,6 +618,7 @@ class Image
         //拾取一个完全透明的颜色,最后一个参数127为全透明
         $bg = imagecolorallocatealpha($img, 255, 255, 255, 127);
         imagefill($img, 0, 0, $bg);
+        imagecolortransparent($img, $bg); 
         $r = $w / 2; //圆半径
         $y_x = $r; //圆心X坐标
         $y_y = $r; //圆心Y坐标
