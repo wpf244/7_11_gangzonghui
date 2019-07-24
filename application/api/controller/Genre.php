@@ -6,7 +6,7 @@ namespace app\api\controller;
 
 use think\Request;
 
-class Genre extends BaseHome
+class Genre extends BaseApi
 {
     public function index()
     {
@@ -85,7 +85,9 @@ class Genre extends BaseHome
     {
         $uid=Request::instance()->header("uid");
 
-        $id=input("id");
+        if($uid){
+
+            $id=input("id");
 
         $re=db("info_up")->where(["uid"=>$uid,"nid"=>$id])->find();
 
@@ -115,6 +117,16 @@ class Genre extends BaseHome
                 ];
             }
         }
+
+        }else{
+            $arr=[
+                'error_code'=>501,
+                'msg'=>"请先登录",
+                'data'=>''
+            ];
+        }
+
+        
         return json($arr);
     }
     /**
@@ -126,6 +138,9 @@ class Genre extends BaseHome
     {
         $uid=Request::instance()->header("uid");
 
+        if($uid){
+
+            
         $data=input("post.");
         $data['uid']=$uid;
         $data['time']=time();
@@ -146,6 +161,15 @@ class Genre extends BaseHome
                 'data'=>[]
             ];
         }
+
+        }else{
+            $arr=[
+                'error_code'=>501,
+                'msg'=>"请先登录",
+                'data'=>''
+            ];
+        }
+
         return json($arr);
     }
     /**

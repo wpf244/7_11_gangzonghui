@@ -4,7 +4,7 @@ namespace app\api\controller;
 use think\Request;
 use think\Validate;
 
-class Info extends BaseHome
+class Info extends BaseApi
 {
     public function index()
     {
@@ -66,31 +66,43 @@ class Info extends BaseHome
     {
          $uid=Request::instance()->header("uid");
 
-         $data=input("post.");
+         if($uid){
 
-        //  var_dump($data);exit;
+            $data=input("post.");
 
-         $data['image']=\implode(",",$data['image']);
+            //  var_dump($data);exit;
+    
+             $data['image']=\implode(",",$data['image']);
+    
+             $data['uid']=$uid;
+    
+             $data['time']=time();
+    
+             $re=db("info")->insert($data);
+    
+             if($re){
+                $arr=[
+                    'error_code'=>0,
+                    'msg'=>"发布成功",
+                    'data'=>[]
+                ]; 
+             }else{
+                $arr=[
+                    'error_code'=>1,
+                    'msg'=>"发布失败",
+                    'data'=>[]
+                ]; 
+             }
 
-         $data['uid']=$uid;
-
-         $data['time']=time();
-
-         $re=db("info")->insert($data);
-
-         if($re){
-            $arr=[
-                'error_code'=>0,
-                'msg'=>"发布成功",
-                'data'=>[]
-            ]; 
          }else{
             $arr=[
-                'error_code'=>1,
-                'msg'=>"发布失败",
-                'data'=>[]
-            ]; 
+                'error_code'=>501,
+                'msg'=>"请先登录",
+                'data'=>''
+            ];
          }
+
+        
          return json($arr);
     }
     /**
@@ -111,14 +123,14 @@ class Info extends BaseHome
                 ]; 
             }else{
                  $arr=[
-                    'error_code'=>0,
+                    'error_code'=>1,
                     'msg'=>"上传失败",
                     'data'=>''
                 ]; 
             }
         }else{
              $arr=[
-                'error_code'=>0,
+                'error_code'=>1,
                 'msg'=>"上传失败",
                 'data'=>''
             ]; 

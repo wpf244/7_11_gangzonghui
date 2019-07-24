@@ -3,7 +3,7 @@ namespace app\api\controller;
 
 use think\Request;
 
-class Index extends BaseHome
+class Index extends BaseApi
 {
     public function index()
     {
@@ -203,14 +203,20 @@ class Index extends BaseHome
             $re['logo']=$url.$re['logo'];
             $re['wx']=$url.$re['wx'];
 
-             //是否收藏
-             $collect=db("collect")->where(["uid"=>$uid,"sid"=>$id])->find();
+            if($uid){
+                $re['collect']=0;
+            }else{
+                //是否收藏
+                $collect=db("collect")->where(["uid"=>$uid,"sid"=>$id])->find();
 
-             if($collect){
-                 $re['collect']=1;
-             }else{
-                 $re['collect']=0;
-             }
+                if($collect){
+                    $re['collect']=1;
+                }else{
+                    $re['collect']=0;
+                }
+            }
+
+             
 
             //设施
             $severs=$re['severs'];
@@ -329,26 +335,36 @@ class Index extends BaseHome
     {
         $uid=Request::instance()->header("uid");
 
-        $data=input("post.");
-        $data['uid']=$uid;
-        $data['time']=time();
-        $data['type']=1;
-        
-        $rea=db("assess")->insert($data);
-
-        if($rea){
-            $arr=[
-                'error_code'=>0,
-                'msg'=>"评论成功",
-                'data'=>[]
-            ];
+        if($uid){
+            $data=input("post.");
+            $data['uid']=$uid;
+            $data['time']=time();
+            $data['type']=1;
+            
+            $rea=db("assess")->insert($data);
+    
+            if($rea){
+                $arr=[
+                    'error_code'=>0,
+                    'msg'=>"评论成功",
+                    'data'=>[]
+                ];
+            }else{
+                $arr=[
+                    'error_code'=>1,
+                    'msg'=>"评论失败",
+                    'data'=>[]
+                ];
+            }
         }else{
             $arr=[
-                'error_code'=>1,
-                'msg'=>"评论失败",
-                'data'=>[]
+                'error_code'=>501,
+                'msg'=>"请先登录",
+                'data'=>''
             ];
         }
+
+        
         return json($arr);
     }
     /**
@@ -374,31 +390,43 @@ class Index extends BaseHome
     {
         $uid=Request::instance()->header("uid");
 
-        $id=input("id");
+        if($uid){
 
-        $re=db("collect")->where(["uid"=>$uid,"sid"=>$id])->find();
+            $id=input("id");
 
-        if($re){
-            $res=db("collect")->where("id",$re['id'])->delete();
+            $re=db("collect")->where(["uid"=>$uid,"sid"=>$id])->find();
+    
+            if($re){
+                $res=db("collect")->where("id",$re['id'])->delete();
+            }else{
+                $data['uid']=$uid;
+                $data['sid']=$id;
+    
+                $res=db("collect")->insert($data);
+            }
+            if($res){
+                $arr=[
+                    'error_code'=>0,
+                    'msg'=>"操作成功",
+                    'data'=>[]
+                ];
+            }else{
+                $arr=[
+                    'error_code'=>1,
+                    'msg'=>"操作成功",
+                    'data'=>[]
+                ];
+            }
+
         }else{
-            $data['uid']=$uid;
-            $data['sid']=$id;
+            $arrs=[
+                'error_code'=>501,
+                'msg'=>"请先登录",
+                'data'=>''
+            ];
+        }
 
-            $res=db("collect")->insert($data);
-        }
-        if($res){
-            $arr=[
-                'error_code'=>0,
-                'msg'=>"操作成功",
-                'data'=>[]
-            ];
-        }else{
-            $arr=[
-                'error_code'=>1,
-                'msg'=>"操作成功",
-                'data'=>[]
-            ];
-        }
+      
         return json($arr);
     }
     /**
