@@ -86,7 +86,7 @@ class Shop extends BaseAdmin
         $this->assign("title",$title);
 
 
-        $list=db("shop")->where(["statu"=>1])->order(["sort asc","id desc"])->paginate(20,false,['query'=>request()->param()]);
+        $list=db("shop")->where(["statu"=>1])->where($map)->order(["sort asc","id desc"])->paginate(20,false,['query'=>request()->param()]);
 
         $this->assign("list",$list);
 
@@ -765,6 +765,8 @@ class Shop extends BaseAdmin
 
         $res=$this->pngMerge($pathss,$pathss);
 
+      
+
        
 
         
@@ -804,8 +806,34 @@ class Shop extends BaseAdmin
         $begin_g = 250;
         $begin_b = 250;
         list($src_w, $src_h) = getimagesize($o_pic);// 获取原图像信息 宽高
-        $src_im = imagecreatefromjpeg($o_pic); //读取png图片
-        // print_r($src_im);
+
+        $ename=getimagesize($o_pic); 
+        $ename=explode('/',$ename['mime']); 
+        $ext=$ename[1]; 
+        switch($ext){ 
+        case "png": 
+            
+            $src_im=imagecreatefrompng($o_pic); 
+            break; 
+        case "jpeg": 
+            
+            $src_im=imagecreatefromjpeg($o_pic); 
+            break; 
+        case "jpg": 
+            
+            $src_im=imagecreatefromjpeg($o_pic); 
+            break; 
+        case "gif": 
+            
+            $src_im=imagecreatefromgif($o_pic); 
+            break; 
+        } 
+
+        // var_dump(getimagesize($o_pic));exit;
+      //  $src_im = imagecreatefrompng($o_pic); //读取png图片
+
+      
+       
         //imagesavealpha($src_im,true);//这里很重要 意思是不要丢了$src_im图像的透明色
         $src_white = imagecolorallocatealpha($src_im, 255, 255, 255,127); // 创建一副白色透明的画布
         for ($x = 0; $x < $src_w; $x++) {
