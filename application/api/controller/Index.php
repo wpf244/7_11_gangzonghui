@@ -170,7 +170,23 @@ class Index extends BaseApi
 
         $lats=input("lats");
 
-        $res=db("shop")->field("id,name,addr,manage,phone,logo,longs,lats")->where(["statu"=>1,"status"=>1,"name|addr|manage"=>['like',"%".$keywords."%"]])->order(["sort asc","id desc"])->select();
+        // $city = mb_substr($keywords, 0,2,"utf8");
+
+        // $map=[];
+        // $map1=[];
+        // if($city){
+        //     $map['addr']=['like',"%$city%"];
+        // }
+
+        // $title=mb_substr($keywords, 2,100,"utf8");
+
+        // if($title){
+        //     $map['name|manage']=['like',"%$title%"];
+        // }
+
+        // $res=db("shop")->field("id,name,addr,manage,phone,logo,longs,lats")->where(["statu"=>1,"status"=>1])->whereOr($map)->order(["sort asc","id desc"])->select();
+
+        $res=db("shop")->field("id,name,addr,manage,phone,logo,longs,lats")->where(["statu"=>1,"status"=>1,"name|addr|manage"=>['like',"%$keywords%"]])->order(["sort asc","id desc"])->select();
 
         foreach($res as $kr => $vr){
             $res[$kr]['logo']=$url.$vr['logo'];
